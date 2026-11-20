@@ -1,0 +1,109 @@
+def desplazar(mensaje, n):
+    """Desplaza cada letra A-Z n posiciones (n puede ser negativo).
+    Conserva espacios, números y signos. La salida va en mayúsculas."""
+    resultado = ""
+    mensaje = mensaje.strip().upper() 
+    for caracter in mensaje:
+        if "A" <= caracter <= "Z": 
+            posicion = ord(caracter) - ord("A") 
+            nueva = (posicion + n) % 26           
+            resultado += chr(nueva + ord("A"))
+        else:
+            resultado += caracter                 
+    return resultado
+
+
+def encriptar(mensaje, n):
+    """Desplaza N posiciones hacia adelante."""
+    return desplazar(mensaje, n)
+
+
+def desencriptar(mensaje, n):
+    """Desplaza N posiciones hacia atrás."""
+    return desplazar(mensaje, -n)
+
+
+def pedir_desplazamiento():
+    """Pide N y valida que sea un entero >= 0. Repite hasta que sea válido."""
+    while True:
+        try:
+            n = int(input("Ingrese el desplazamiento N: "))
+            if n < 0:
+                raise ValueError("N no puede ser negativo")
+            return n
+        except ValueError:
+            print("Error: N debe ser un número entero mayor o igual a 0.")
+
+
+def mostrar_menu():
+    print()
+    print("SISTEMA DE CIFRADO CÉSAR MODIFICADO")
+    print("=================================")
+    print("1. Encriptar mensaje (Opción de Guardar mensaje (S/N))")
+    print("2. Desencriptar mensaje")
+    print("3. Imprimir mensajes guardados")
+    print("4. Salir")
+    print("=================================")
+
+
+def opcion_encriptar(guardados):
+    mensaje = input("Ingrese el mensaje: ")
+    n = pedir_desplazamiento()
+    cifrado = encriptar(mensaje, n)
+    print("Mensaje original:", mensaje.strip().upper())
+    print("Mensaje encriptado:", cifrado)
+
+    while True:
+        respuesta = input("¿Desea guardar el mensaje? (S/N): ").strip().upper()
+        if respuesta == "S":
+            guardados.append({
+                "original": mensaje.strip().upper(),
+                "cifrado": cifrado,
+                "n": n,
+            })
+            print("Mensaje guardado correctamente.")
+            break
+        elif respuesta == "N":
+            break
+        else:
+            print("Respuesta no válida. Escriba S o N.")
+
+
+def opcion_desencriptar():
+    mensaje = input("Ingrese el mensaje encriptado: ")
+    n = pedir_desplazamiento()
+    print("Mensaje desencriptado:", desencriptar(mensaje, n))
+
+
+def opcion_imprimir(guardados):
+    if len(guardados) == 0:
+        print("No hay mensajes guardados")
+        return
+    print("MENSAJES GUARDADOS")
+    for i, registro in enumerate(guardados, start=1):
+        print(f"{i}. Original: {registro['original']}")
+        print(f"   Encriptado: {registro['cifrado']}")
+        print(f"   Desplazamiento: {registro['n']}")
+
+
+def main():
+    guardados = []  
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ").strip()
+
+        if opcion == "1":
+            opcion_encriptar(guardados)
+        elif opcion == "2":
+            opcion_desencriptar()
+        elif opcion == "3":
+            opcion_imprimir(guardados)
+        elif opcion == "4":
+            print("Gracias por utilizar el sistema.")
+            break
+        else:
+            print("Opción inexistente. Elija un número del 1 al 4.")
+
+
+if __name__ == "__main__":
+    main()
